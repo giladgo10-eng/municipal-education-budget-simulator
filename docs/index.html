@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>סימולטור תקציב חינוך עירוני — כמות × מפתח עלות = תקציב (V2 Updated)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800;900&family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-900: #0f172a;
+      --primary-800: #1e293b;
+      --primary-700: #334155;
+      --brand-blue: #2563eb;
+      --brand-blue-hover: #1d4ed8;
+      --brand-blue-light: #eff6ff;
+      --accent-emerald: #059669;
+      --accent-emerald-light: #ecfdf5;
+      --accent-purple: #7c3aed;
+      --accent-purple-light: #f5f3ff;
+      --accent-amber: #d97706;
+      --accent-amber-light: #fffbeb;
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border-color: #e2e8f0;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Assistant', 'Heebo', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--primary-900);
+      direction: rtl;
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 1.5rem 1rem 3rem 1rem;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: 1.5rem 2rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title-group h1 {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: var(--primary-900);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .header-title-group p {
+      color: var(--primary-700);
+      font-size: 0.95rem;
+      margin-top: 0.2rem;
+    }
+
+    /* Dedicated 5-Button Control Bar */
+    .top-control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-top: 1.1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.9rem;
+      font-weight: 800;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      color: var(--primary-800);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .btn-top:hover {
+      background: var(--brand-blue-light);
+      border-color: #bfdbfe;
+      color: var(--brand-blue);
+      transform: translateY(-1px);
+    }
+    .btn-top.active {
+      background: var(--brand-blue);
+      border-color: var(--brand-blue);
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(37,99,235,0.25);
+    }
+
+    .btn-top-primary {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: var(--brand-blue);
+    }
+    .btn-top-primary:hover {
+      background: var(--brand-blue);
+      color: #ffffff;
+      border-color: var(--brand-blue);
+    }
+
+    .btn-top-reset {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: var(--primary-700);
+      margin-right: auto;
+    }
+    .btn-top-reset:hover {
+      background: #e2e8f0;
+      color: var(--primary-900);
+    }
+
+    /* Top KPI Bar */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 980px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px) { .kpi-grid { grid-template-columns: 1fr; } }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.4rem;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 4px;
+      background: var(--brand-blue);
+    }
+    .kpi-card.c2::before { background: var(--accent-emerald); }
+    .kpi-card.c3::before { background: var(--accent-purple); }
+    .kpi-card.c4::before { background: var(--accent-amber); }
+
+    .kpi-label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--primary-700);
+      margin-bottom: 0.35rem;
+    }
+    .kpi-value {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--primary-900);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 0.25rem;
+    }
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--primary-700);
+    }
+
+    /* 4 Functional Sections Grid */
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 900px) { .sections-grid { grid-template-columns: 1fr; } }
+
+    .section-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.15rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .section-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .section-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--brand-blue);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .section-icon-badge.c2 { background: var(--accent-emerald); }
+    .section-icon-badge.c3 { background: var(--accent-purple); }
+    .section-icon-badge.c4 { background: var(--accent-amber); }
+
+    .section-title-text {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary-900);
+    }
+    .section-desc-text {
+      font-size: 0.78rem;
+      color: var(--primary-700);
+    }
+
+    /* Driver Item Box */
+    .driver-box {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .driver-box:last-child { margin-bottom: 0; }
+
+    .driver-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+    .driver-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--primary-900);
+    }
+    .driver-total-badge {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--brand-blue);
+      background: var(--brand-blue-light);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #bfdbfe;
+    }
+    .driver-total-badge.emerald { color: var(--accent-emerald); background: var(--accent-emerald-light); border-color: #a7f3d0; }
+    .driver-total-badge.purple { color: var(--accent-purple); background: var(--accent-purple-light); border-color: #ddd6fe; }
+    .driver-total-badge.amber { color: var(--accent-amber); background: var(--accent-amber-light); border-color: #fde68a; }
+
+    .control-row {
+      margin-bottom: 0.75rem;
+    }
+    .control-label-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 0.3rem;
+    }
+    .control-name {
+      font-weight: 700;
+      color: var(--primary-800);
+    }
+    .control-inputs-pair {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .num-input {
+      width: 90px;
+      padding: 0.2rem 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--primary-900);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      text-align: left;
+      direction: ltr;
+    }
+
+    .range-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #cbd5e1;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--brand-blue);
+      cursor: pointer;
+      box-shadow: 0 0 0 2px #ffffff, 0 1px 3px rgba(0,0,0,0.3);
+      transition: transform 0.1s ease;
+    }
+    .range-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    .range-slider.green::-webkit-slider-thumb { background: var(--accent-emerald); }
+    .range-slider.purple::-webkit-slider-thumb { background: var(--accent-purple); }
+    .range-slider.amber::-webkit-slider-thumb { background: var(--accent-amber); }
+
+    .live-calc-box {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--primary-900);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0.45rem 0.65rem;
+      margin-top: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      direction: ltr;
+      text-align: right;
+    }
+    .live-calc-formula {
+      font-family: monospace;
+      color: var(--brand-blue);
+      font-size: 0.88rem;
+    }
+    .live-calc-formula.emerald { color: var(--accent-emerald); }
+    .live-calc-formula.purple { color: var(--accent-purple); }
+    .live-calc-formula.amber { color: var(--accent-amber); }
+
+    .section-subtotal-box {
+      background: #ffffff;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 0.65rem 0.85rem;
+      margin-top: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.86rem;
+    }
+    .subtotal-label { font-weight: 700; color: var(--primary-700); }
+    .subtotal-val { font-weight: 900; color: var(--primary-900); font-size: 1rem; }
+
+    /* Summary Table */
+    .summary-table-section {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+    .table-header-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary-900);
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      text-align: right;
+    }
+    .data-table th {
+      background: #f8fafc;
+      padding: 0.75rem 0.9rem;
+      font-weight: 800;
+      color: var(--primary-800);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .data-table td {
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--primary-800);
+    }
+    .data-table tr:hover td { background: #f8fafc; }
+    .data-table tr.total-row td {
+      font-weight: 900;
+      background: #f1f5f9;
+      border-top: 2px solid var(--border-color);
+      border-bottom: 2px solid var(--border-color);
+      color: var(--primary-900);
+    }
+
+    /* Modal / Drawer Overlay for Direct Data Input */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-container {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      max-width: 920px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      animation: modalSlideUp 0.25s ease-out;
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+    .modal-title-group h2 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--primary-900);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .modal-title-group p {
+      font-size: 0.82rem;
+      color: var(--primary-700);
+      margin-top: 0.2rem;
+    }
+
+    .btn-close-modal {
+      background: transparent;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--primary-700);
+      line-height: 1;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+    }
+    .btn-close-modal:hover {
+      background: #e2e8f0;
+      color: var(--primary-900);
+    }
+
+    .modal-body {
+      padding: 1.25rem 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .input-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    .input-table th {
+      background: #f1f5f9;
+      padding: 0.65rem 0.85rem;
+      font-weight: 800;
+      color: var(--primary-800);
+      border-bottom: 1px solid var(--border-color);
+      text-align: right;
+    }
+    .input-table td {
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+    .input-table tr:hover td {
+      background: #f8fafc;
+    }
+    .input-table tr.total-row td {
+      background: #eff6ff;
+      font-weight: 900;
+      border-top: 2px solid #bfdbfe;
+      border-bottom: 2px solid #bfdbfe;
+    }
+
+    .tbl-input-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .tbl-input {
+      width: 110px;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--primary-900);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      text-align: left;
+      direction: ltr;
+    }
+    .tbl-input:focus {
+      outline: none;
+      border-color: var(--brand-blue);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+    }
+    .tbl-unit-label {
+      font-size: 0.78rem;
+      color: var(--primary-700);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .dimmed-text {
+      color: #94a3b8;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .calculated-cell {
+      font-weight: 800;
+      font-family: monospace;
+      font-size: 0.92rem;
+      color: var(--brand-blue);
+      direction: ltr;
+      text-align: left;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn-modal-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.88rem;
+      font-weight: 800;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .btn-modal-action.primary {
+      background: var(--brand-blue);
+      border: 1px solid var(--brand-blue);
+      color: #ffffff;
+    }
+    .btn-modal-action.primary:hover {
+      background: var(--brand-blue-hover);
+    }
+    .btn-modal-action.secondary {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      color: var(--primary-700);
+    }
+    .btn-modal-action.secondary:hover {
+      background: var(--bg-subtle);
+      color: var(--primary-900);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Top Header -->
+    <header>
+      <div class="header-top">
+        <div class="header-title-group">
+          <h1>
+            <span>🏛️</span>
+            <span>סימולטור תקציב חינוך עירוני</span>
+          </h1>
+          <p>מודל תכנון פשוט, גמיש ואינטואיטיבי: כמות × מפתח עלות = תקציב</p>
+        </div>
+      </div>
+
+      <!-- Single Row with 5 Buttons -->
+      <div class="top-control-bar">
+        <button type="button" class="btn-top" id="btnPresetSmall">
+          <span>🏘️</span> רשות קטנה
+        </button>
+        <button type="button" class="btn-top active" id="btnPresetMedium">
+          <span>🏢</span> רשות בינונית
+        </button>
+        <button type="button" class="btn-top" id="btnPresetLarge">
+          <span>🏙️</span> רשות גדולה
+        </button>
+        <button type="button" class="btn-top btn-top-primary" id="btnOpenDataTable">
+          <span>📋</span> הזנת נתוני הרשות שלי
+        </button>
+        <button type="button" class="btn-top btn-top-reset" id="btnResetDefaults">
+          <span>🔄</span> איפוס
+        </button>
+      </div>
+    </header>
+
+    <!-- Top KPI Bar -->
+    <section class="kpi-grid">
+      <!-- KPI 1: Total Budget -->
+      <div class="kpi-card">
+        <div>
+          <div class="kpi-label">סך כל תקציב החינוך</div>
+          <div class="kpi-value" id="kpiTotalBudget">117,900,000 ₪</div>
+        </div>
+        <div class="kpi-sub">סכום כל 11 התחומים</div>
+      </div>
+
+      <!-- KPI 2: Per Student Average -->
+      <div class="kpi-card c2">
+        <div>
+          <div class="kpi-label">עלות ממוצעת לתלמיד</div>
+          <div class="kpi-value" id="kpiPerStudent">5,895 ₪</div>
+        </div>
+        <div class="kpi-sub">תקציב כולל / סה"כ תלמידים</div>
+      </div>
+
+      <!-- KPI 3: Total Students -->
+      <div class="kpi-card c3">
+        <div>
+          <div class="kpi-label">סה"כ תלמידים ברשות</div>
+          <div class="kpi-value" id="kpiTotalStudents">20,000</div>
+        </div>
+        <div class="kpi-sub" id="kpiStudentsBreakdown">3,000 גנים | 9,000 יסודי | 8,000 על-יסודי</div>
+      </div>
+
+      <!-- KPI 4: Total Institutions -->
+      <div class="kpi-card c4">
+        <div>
+          <div class="kpi-label">סה"כ מוסדות ומבנים</div>
+          <div class="kpi-value" id="kpiTotalInst">143</div>
+        </div>
+        <div class="kpi-sub" id="kpiInstBreakdown">120 גנים | 15 יסודי | 8 על-יסודי</div>
+      </div>
+    </section>
+
+    <!-- 4 Functional Sections Grid -->
+    <section class="sections-grid">
+      
+      <!-- Section 1: Per-Student Pedagogical Baskets -->
+      <div class="section-card">
+        <div>
+          <div class="section-header">
+            <div class="section-title-group">
+              <div class="section-icon-badge">1</div>
+              <div>
+                <div class="section-title-text">סלים פדגוגיים לפי תלמיד</div>
+                <div class="section-desc-text">הזנה, תרבות, קרן קרב, תוכניות העשרה וחומרי למידה</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Driver 1: KG Students -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">ילדי גנים (טרום-חובה וחובה)</span>
+              <span class="driver-total-badge" id="badgeKgPedTotal">3,600,000 ₪</span>
+            </div>
+            <!-- Quantity Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מספר ילדי גן:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numKgStudents" value="3000" min="100" max="50000" step="50">
+                  <span>ילדים</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider" id="sliderKgStudents" min="100" max="50000" step="50" value="3000">
+            </div>
+            <!-- Cost Key Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">תקציב פדגוגי לילד:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numKgPedKey" value="1200" min="100" max="10000" step="50">
+                  <span>₪ לילד</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider" id="sliderKgPedKey" min="100" max="10000" step="50" value="1200">
+            </div>
+            <!-- Live Calculation Display -->
+            <div class="live-calc-box">
+              <span>תוצאה:</span>
+              <span class="live-calc-formula" id="calcKgPed">3,000 × 1,200 ₪ = 3,600,000 ₪</span>
+            </div>
+          </div>
+
+          <!-- Driver 2: Elem Students -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">תלמידי בתי ספר יסודיים</span>
+              <span class="driver-total-badge" id="badgeElemPedTotal">7,200,000 ₪</span>
+            </div>
+            <!-- Quantity Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מספר תלמידי יסודי:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numElemStudents" value="9000" min="500" max="100000" step="50">
+                  <span>תלמידים</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider" id="sliderElemStudents" min="500" max="100000" step="50" value="9000">
+            </div>
+            <!-- Cost Key Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">תקציב פדגוגי לתלמיד:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numElemPedKey" value="800" min="100" max="10000" step="50">
+                  <span>₪ לתלמיד</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider" id="sliderElemPedKey" min="100" max="10000" step="50" value="800">
+            </div>
+            <!-- Live Calculation Display -->
+            <div class="live-calc-box">
+              <span>תוצאה:</span>
+              <span class="live-calc-formula" id="calcElemPed">9,000 × 800 ₪ = 7,200,000 ₪</span>
+            </div>
+          </div>
+
+          <!-- Driver 3: Sec Students -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">תלמידי על-יסודי וחטיבות ביניים</span>
+              <span class="driver-total-badge" id="badgeSecPedTotal">4,000,000 ₪</span>
+            </div>
+            <!-- Quantity Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מספר תלמידי על-יסודי:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numSecStudents" value="8000" min="500" max="100000" step="50">
+                  <span>תלמידים</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider" id="sliderSecStudents" min="500" max="100000" step="50" value="8000">
+            </div>
+            <!-- Cost Key Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">תקציב פדגוגי לתלמיד:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numSecPedKey" value="500" min="50" max="10000" step="50">
+                  <span>₪ לתלמיד</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider" id="sliderSecPedKey" min="50" max="10000" step="50" value="500">
+            </div>
+            <!-- Live Calculation Display -->
+            <div class="live-calc-box">
+              <span>תוצאה:</span>
+              <span class="live-calc-formula" id="calcSecPed">8,000 × 500 ₪ = 4,000,000 ₪</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-subtotal-box">
+          <span class="subtotal-label">סה"כ סלים פדגוגיים:</span>
+          <span class="subtotal-val" id="subtotalPed">14,800,000 ₪</span>
+        </div>
+      </div>
+
+      <!-- Section 2: Institution Operations & Maintenance -->
+      <div class="section-card">
+        <div>
+          <div class="section-header">
+            <div class="section-title-group">
+              <div class="section-icon-badge c2">2</div>
+              <div>
+                <div class="section-title-text">תפעול ואחזקת מוסדות ומבנים</div>
+                <div class="section-desc-text">שכר שרתים ומזכירים, סייעות גנים, חשמל, מים, ניקיון ואחזקה</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Driver 4: KG Institutions -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">גני ילדים (כיתות גן פעילות)</span>
+              <span class="driver-total-badge emerald" id="badgeKgInstTotal">36,000,000 ₪</span>
+            </div>
+            <!-- Quantity Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מספר כיתות גן:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numKgInst" value="120" min="5" max="1000" step="1">
+                  <span>כיתות גן</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider green" id="sliderKgInst" min="5" max="1000" step="1" value="120">
+            </div>
+            <!-- Cost Key Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מפתח תפעול וסייעות לגן:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numKgInstKey" value="300000" min="20000" max="1500000" step="5000">
+                  <span>₪ לגן</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider green" id="sliderKgInstKey" min="20000" max="1500000" step="5000" value="300000">
+            </div>
+            <!-- Live Calculation Display -->
+            <div class="live-calc-box">
+              <span>תוצאה:</span>
+              <span class="live-calc-formula emerald" id="calcKgInst">120 × 300,000 ₪ = 36,000,000 ₪</span>
+            </div>
+          </div>
+
+          <!-- Driver 5: Elem Institutions -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">בתי ספר יסודיים (מבנים / קמפוסים)</span>
+              <span class="driver-total-badge emerald" id="badgeElemInstTotal">15,000,000 ₪</span>
+            </div>
+            <!-- Quantity Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מספר בתי ספר יסודיים:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numElemInst" value="15" min="1" max="200" step="1">
+                  <span>בתי ספר</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider green" id="sliderElemInst" min="1" max="200" step="1" value="15">
+            </div>
+            <!-- Cost Key Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מפתח מנהלה ואחזקה לבי"ס:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numElemInstKey" value="1000000" min="100000" max="5000000" step="25000">
+                  <span>₪ לבי"ס</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider green" id="sliderElemInstKey" min="100000" max="5000000" step="25000" value="1000000">
+            </div>
+            <!-- Live Calculation Display -->
+            <div class="live-calc-box">
+              <span>תוצאה:</span>
+              <span class="live-calc-formula emerald" id="calcElemInst">15 × 1,000,000 ₪ = 15,000,000 ₪</span>
+            </div>
+          </div>
+
+          <!-- Driver 6: Sec Institutions -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">מוסדות על-יסודי וחטיבות ביניים</span>
+              <span class="driver-total-badge emerald" id="badgeSecInstTotal">4,000,000 ₪</span>
+            </div>
+            <!-- Quantity Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מספר מוסדות על-יסודי:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numSecInst" value="8" min="1" max="100" step="1">
+                  <span>מוסדות</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider green" id="sliderSecInst" min="1" max="100" step="1" value="8">
+            </div>
+            <!-- Cost Key Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מפתח תפעול למוסד:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numSecInstKey" value="500000" min="50000" max="5000000" step="25000">
+                  <span>₪ למוסד</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider green" id="sliderSecInstKey" min="50000" max="5000000" step="25000" value="500000">
+            </div>
+            <!-- Live Calculation Display -->
+            <div class="live-calc-box">
+              <span>תוצאה:</span>
+              <span class="live-calc-formula emerald" id="calcSecInst">8 × 500,000 ₪ = 4,000,000 ₪</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-subtotal-box">
+          <span class="subtotal-label">סה"כ תפעול ואחזקת מוסדות:</span>
+          <span class="subtotal-val" id="subtotalInst">55,000,000 ₪</span>
+        </div>
+      </div>
+
+      <!-- Section 3: Special Populations & Transport -->
+      <div class="section-card">
+        <div>
+          <div class="section-header">
+            <div class="section-title-group">
+              <div class="section-icon-badge c3">3</div>
+              <div>
+                <div class="section-title-text">שירותים ואוכלוסיות מיוחדות</div>
+                <div class="section-desc-text">סייעות אישיות, כיתות מקדמות, שילוב, קווי הסעה ומלוות</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Driver 7: Special Ed -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">חינוך מיוחד ושילוב</span>
+              <span class="driver-total-badge purple" id="badgeSpEdTotal">16,000,000 ₪</span>
+            </div>
+            <!-- Quantity Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">כמות תלמידי חינוך מיוחד:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numSpEdStudents" value="2000" min="20" max="20000" step="25">
+                  <span>תלמידים</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider purple" id="sliderSpEdStudents" min="20" max="20000" step="25" value="2000">
+            </div>
+            <!-- Cost Key Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מפתח עלות לתלמיד חנ"מ:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numSpEdKey" value="8000" min="1000" max="50000" step="250">
+                  <span>₪ לתלמיד</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider purple" id="sliderSpEdKey" min="1000" max="50000" step="250" value="8000">
+            </div>
+            <!-- Live Calculation Display -->
+            <div class="live-calc-box">
+              <span>תוצאה:</span>
+              <span class="live-calc-formula purple" id="calcSpEd">2,000 × 8,000 ₪ = 16,000,000 ₪</span>
+            </div>
+          </div>
+
+          <!-- Driver 8: Transport -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">מערך הסעות תלמידים וליווי</span>
+              <span class="driver-total-badge purple" id="badgeTransTotal">21,600,000 ₪</span>
+            </div>
+            <!-- Quantity Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">כמות תלמידים מוסעים:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numTransStudents" value="1200" min="10" max="20000" step="25">
+                  <span>מוסעים</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider purple" id="sliderTransStudents" min="10" max="20000" step="25" value="1200">
+            </div>
+            <!-- Cost Key Control -->
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מפתח עלות שנתית למוסע:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numTransKey" value="18000" min="1000" max="60000" step="250">
+                  <span>₪ למוסע</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider purple" id="sliderTransKey" min="1000" max="60000" step="250" value="18000">
+            </div>
+            <!-- Live Calculation Display -->
+            <div class="live-calc-box">
+              <span>תוצאה:</span>
+              <span class="live-calc-formula purple" id="calcTrans">1,200 × 18,000 ₪ = 21,600,000 ₪</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-subtotal-box">
+          <span class="subtotal-label">סה"כ חנ"מ והסעות:</span>
+          <span class="subtotal-val" id="subtotalSpecial">37,600,000 ₪</span>
+        </div>
+      </div>
+
+      <!-- Section 4: Flexible & Fixed Envelopes -->
+      <div class="section-card">
+        <div>
+          <div class="section-header">
+            <div class="section-title-group">
+              <div class="section-icon-badge c4">4</div>
+              <div>
+                <div class="section-title-text">מעטפות גמישות ותקציב קבוע</div>
+                <div class="section-desc-text">גפ"ן רשותי, יוזמות ופרויקטים עירוניים ובסיס מטה קבוע</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Driver 9: Gefen -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">תקציב גפ"ן רשותי (מעטפת מטה)</span>
+              <span class="driver-total-badge amber" id="badgeGefenTotal">1,500,000 ₪</span>
+            </div>
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">גובה מעטפת גפ"ן רשותי:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numGefenBudget" value="1500000" min="0" max="20000000" step="50000" style="width:110px;">
+                  <span>₪</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider amber" id="sliderGefenBudget" min="0" max="20000000" step="50000" value="1500000">
+            </div>
+            <div class="live-calc-box">
+              <span>הקצאה שקלית:</span>
+              <span class="live-calc-formula amber" id="calcGefen">מעטפת ישירה: 1,500,000 ₪</span>
+            </div>
+          </div>
+
+          <!-- Driver 10: Flexible Projects -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">תקציב יוזמות ופרויקטים עירוניים</span>
+              <span class="driver-total-badge amber" id="badgeFlexTotal">1,000,000 ₪</span>
+            </div>
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">מעטפת יוזמות ומדיניות ראש עיר:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numFlexBudget" value="1000000" min="0" max="20000000" step="50000" style="width:110px;">
+                  <span>₪</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider amber" id="sliderFlexBudget" min="0" max="20000000" step="50000" value="1000000">
+            </div>
+            <div class="live-calc-box">
+              <span>הקצאה שקלית:</span>
+              <span class="live-calc-formula amber" id="calcFlex">מעטפת ישירה: 1,000,000 ₪</span>
+            </div>
+          </div>
+
+          <!-- Driver 11: Fixed HQ Base -->
+          <div class="driver-box">
+            <div class="driver-header">
+              <span class="driver-title">בסיס מטה, ביטחון והוצאות קבועות</span>
+              <span class="driver-total-badge amber" id="badgeFixedTotal">8,000,000 ₪</span>
+            </div>
+            <div class="control-row">
+              <div class="control-label-bar">
+                <span class="control-name">תקציב קבוע למטה, שפ"ח וביטחון:</span>
+                <div class="control-inputs-pair">
+                  <input type="number" class="num-input" id="numFixedBudget" value="8000000" min="500000" max="50000000" step="100000" style="width:110px;">
+                  <span>₪</span>
+                </div>
+              </div>
+              <input type="range" class="range-slider amber" id="sliderFixedBudget" min="500000" max="50000000" step="100000" value="8000000">
+            </div>
+            <div class="live-calc-box">
+              <span>הוצאה קבועה:</span>
+              <span class="live-calc-formula amber" id="calcFixed">בסיס קבוע: 8,000,000 ₪</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-subtotal-box">
+          <span class="subtotal-label">סה"כ מעטפות ותקציב קבוע:</span>
+          <span class="subtotal-val" id="subtotalEnvelopes">10,500,000 ₪</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Full Breakdown Summary Table -->
+    <section class="summary-table-section">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.85rem;">
+        <div class="table-header-title" style="margin-bottom: 0;">
+          <span>📋</span>
+          <span>טבלת ריכוז תקציב החינוך — פירוט 11 מנועי העלות</span>
+        </div>
+        <button type="button" class="btn-top btn-top-primary" id="btnDownloadSummaryTable" style="padding: 0.45rem 0.95rem; font-size: 0.85rem;">
+          <span>⬇️</span> הורדת טבלת התקציב לאקסל
+        </button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>תחום תקציבי</th>
+            <th>סוג מנוע</th>
+            <th>כמות פעילה</th>
+            <th>מפתח עלות שנקבע</th>
+            <th>סך עלות התחום (₪)</th>
+            <th>אחוז מסך התקציב</th>
+          </tr>
+        </thead>
+        <tbody id="tbodySummary">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <!-- Direct Data Input Modal -->
+  <div class="modal-overlay" id="modalDirectInput">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2>
+            <span>📋</span>
+            <span>הזנת נתוני הרשות שלי</span>
+          </h2>
+          <p>הזנה ישירה של נתונים. כל שינוי מסתנכרן אוטומטית עם המחוגים וכלל חישובי הסימולטור.</p>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseModalX" title="סגור חלון">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <table class="input-table">
+          <thead>
+            <tr>
+              <th>תחום תקציבי</th>
+              <th>כמות פעילה</th>
+              <th>מפתח עלות תקציבי (₪)</th>
+              <th style="text-align:left;">עלות מחושבת (₪)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- 1. KG Ped -->
+            <tr>
+              <td><strong>1. ילדי גנים (סל פדגוגי)</strong></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumKgStudents">
+                  <span class="tbl-unit-label">ילדים</span>
+                </div>
+              </td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumKgPedKey">
+                  <span class="tbl-unit-label">₪ לילד</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblKgPedTotal">0 ₪</td>
+            </tr>
+
+            <!-- 2. Elem Ped -->
+            <tr>
+              <td><strong>2. תלמידי יסודי (סל פדגוגי)</strong></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumElemStudents">
+                  <span class="tbl-unit-label">תלמידים</span>
+                </div>
+              </td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumElemPedKey">
+                  <span class="tbl-unit-label">₪ לתלמיד</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblElemPedTotal">0 ₪</td>
+            </tr>
+
+            <!-- 3. Sec Ped -->
+            <tr>
+              <td><strong>3. תלמידי על-יסודי (סל פדגוגי)</strong></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumSecStudents">
+                  <span class="tbl-unit-label">תלמידים</span>
+                </div>
+              </td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumSecPedKey">
+                  <span class="tbl-unit-label">₪ לתלמיד</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblSecPedTotal">0 ₪</td>
+            </tr>
+
+            <!-- 4. KG Inst -->
+            <tr>
+              <td><strong>4. תפעול וסייעות כיתות גן</strong></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumKgInst">
+                  <span class="tbl-unit-label">כיתות גן</span>
+                </div>
+              </td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumKgInstKey">
+                  <span class="tbl-unit-label">₪ לגן</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblKgInstTotal">0 ₪</td>
+            </tr>
+
+            <!-- 5. Elem Inst -->
+            <tr>
+              <td><strong>5. שכר מנהלה ואחזקת יסודי</strong></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumElemInst">
+                  <span class="tbl-unit-label">בתי ספר</span>
+                </div>
+              </td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumElemInstKey">
+                  <span class="tbl-unit-label">₪ לבי"ס</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblElemInstTotal">0 ₪</td>
+            </tr>
+
+            <!-- 6. Sec Inst -->
+            <tr>
+              <td><strong>6. תפעול מוסדות על-יסודי</strong></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumSecInst">
+                  <span class="tbl-unit-label">מוסדות</span>
+                </div>
+              </td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumSecInstKey">
+                  <span class="tbl-unit-label">₪ למוסד</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblSecInstTotal">0 ₪</td>
+            </tr>
+
+            <!-- 7. SpEd -->
+            <tr>
+              <td><strong>7. חינוך מיוחד ושילוב</strong></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumSpEdStudents">
+                  <span class="tbl-unit-label">תלמידים</span>
+                </div>
+              </td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumSpEdKey">
+                  <span class="tbl-unit-label">₪ לתלמיד</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblSpEdTotal">0 ₪</td>
+            </tr>
+
+            <!-- 8. Transport -->
+            <tr>
+              <td><strong>8. מערך הסעות תלמידים וליווי</strong></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumTransStudents">
+                  <span class="tbl-unit-label">מוסעים</span>
+                </div>
+              </td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumTransKey">
+                  <span class="tbl-unit-label">₪ למוסע</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblTransTotal">0 ₪</td>
+            </tr>
+
+            <!-- 9. Gefen -->
+            <tr>
+              <td><strong>9. מעטפת גפ"ן רשותי</strong></td>
+              <td><span class="dimmed-text">מעטפת מטה</span></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumGefenBudget" style="width:130px;">
+                  <span class="tbl-unit-label">₪ ישיר</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblGefenTotal">0 ₪</td>
+            </tr>
+
+            <!-- 10. Flexible -->
+            <tr>
+              <td><strong>10. יוזמות ופרויקטים עירוניים</strong></td>
+              <td><span class="dimmed-text">מעטפת יוזמות</span></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumFlexBudget" style="width:130px;">
+                  <span class="tbl-unit-label">₪ ישיר</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblFlexTotal">0 ₪</td>
+            </tr>
+
+            <!-- 11. Fixed -->
+            <tr>
+              <td><strong>11. בסיס מטה והוצאות קבועות</strong></td>
+              <td><span class="dimmed-text">בסיס קבוע</span></td>
+              <td>
+                <div class="tbl-input-group">
+                  <input type="number" class="tbl-input" id="tblNumFixedBudget" style="width:130px;">
+                  <span class="tbl-unit-label">₪ ישיר</span>
+                </div>
+              </td>
+              <td class="calculated-cell" id="tblFixedTotal">0 ₪</td>
+            </tr>
+
+            <!-- Summary Row -->
+            <tr class="total-row">
+              <td colspan="3"><strong>סה"כ כלל תקציב החינוך המחושב</strong></td>
+              <td class="calculated-cell" id="tblTotalBudget" style="font-size:1.05rem; color:var(--brand-blue);">0 ₪</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-action primary" id="btnDownloadCsv">
+          <span>⬇️</span> הורדת נתוני הרשות (CSV)
+        </button>
+        <button type="button" class="btn-modal-action secondary" id="btnCloseModalBtn">
+          סגור
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       Pure Quantity x Key = Cost Simulation Engine & Two-Way Sync
+       ========================================================================== */
+
+    const PRESETS = {
+      small: {
+        kgStudents: 800,
+        kgPedKey: 1200,
+        elemStudents: 2200,
+        elemPedKey: 800,
+        secStudents: 2000,
+        secPedKey: 500,
+        kgInst: 32,
+        kgInstKey: 300000,
+        elemInst: 4,
+        elemInstKey: 1000000,
+        secInst: 2,
+        secInstKey: 500000,
+        spEdStudents: 500,
+        spEdKey: 8000,
+        transStudents: 300,
+        transKey: 18000,
+        gefenBudget: 400000,
+        flexBudget: 300000,
+        fixedBudget: 3000000
+      },
+      medium: {
+        kgStudents: 3000,
+        kgPedKey: 1200,
+        elemStudents: 9000,
+        elemPedKey: 800,
+        secStudents: 8000,
+        secPedKey: 500,
+        kgInst: 120,
+        kgInstKey: 300000,
+        elemInst: 15,
+        elemInstKey: 1000000,
+        secInst: 8,
+        secInstKey: 500000,
+        spEdStudents: 2000,
+        spEdKey: 8000,
+        transStudents: 1200,
+        transKey: 18000,
+        gefenBudget: 1500000,
+        flexBudget: 1000000,
+        fixedBudget: 8000000
+      },
+      large: {
+        kgStudents: 8000,
+        kgPedKey: 1200,
+        elemStudents: 22000,
+        elemPedKey: 800,
+        secStudents: 20000,
+        secPedKey: 500,
+        kgInst: 300,
+        kgInstKey: 300000,
+        elemInst: 36,
+        elemInstKey: 1000000,
+        secInst: 20,
+        secInstKey: 500000,
+        spEdStudents: 5000,
+        spEdKey: 8000,
+        transStudents: 3000,
+        transKey: 18000,
+        gefenBudget: 3500000,
+        flexBudget: 2500000,
+        fixedBudget: 15000000
+      }
+    };
+
+    let state = Object.assign({}, PRESETS.medium);
+
+    // Formatters
+    function formatNIS(val) {
+      return Math.round(val).toLocaleString('he-IL') + ' ₪';
+    }
+    function formatNum(val) {
+      return Math.round(val).toLocaleString('he-IL');
+    }
+
+    // Core Calculation
+    function calculate() {
+      const kgPedTotal = state.kgStudents * state.kgPedKey;
+      const elemPedTotal = state.elemStudents * state.elemPedKey;
+      const secPedTotal = state.secStudents * state.secPedKey;
+      const subtotalPed = kgPedTotal + elemPedTotal + secPedTotal;
+
+      const kgInstTotal = state.kgInst * state.kgInstKey;
+      const elemInstTotal = state.elemInst * state.elemInstKey;
+      const secInstTotal = state.secInst * state.secInstKey;
+      const subtotalInst = kgInstTotal + elemInstTotal + secInstTotal;
+
+      const spEdTotal = state.spEdStudents * state.spEdKey;
+      const transTotal = state.transStudents * state.transKey;
+      const subtotalSpecial = spEdTotal + transTotal;
+
+      const gefenTotal = state.gefenBudget;
+      const flexTotal = state.flexBudget;
+      const fixedTotal = state.fixedBudget;
+      const subtotalEnvelopes = gefenTotal + flexTotal + fixedTotal;
+
+      const totalBudget = subtotalPed + subtotalInst + subtotalSpecial + subtotalEnvelopes;
+      const totalStudents = state.kgStudents + state.elemStudents + state.secStudents;
+      const totalInst = state.kgInst + state.elemInst + state.secInst;
+      const perStudent = totalStudents > 0 ? Math.round(totalBudget / totalStudents) : 0;
+
+      const rows = [
+        { id: 1, name: 'סל פדגוגי גני ילדים', type: 'פר תלמיד', q: `${formatNum(state.kgStudents)} ילדים`, key: `${formatNIS(state.kgPedKey)} לילד`, total: kgPedTotal },
+        { id: 2, name: 'סל פדגוגי בתי ספר יסודיים', type: 'פר תלמיד', q: `${formatNum(state.elemStudents)} תלמידים`, key: `${formatNIS(state.elemPedKey)} לתלמיד`, total: elemPedTotal },
+        { id: 3, name: 'סל פדגוגי על-יסודי וחט"ב', type: 'פר תלמיד', q: `${formatNum(state.secStudents)} תלמידים`, key: `${formatNIS(state.secPedKey)} לתלמיד`, total: secPedTotal },
+        { id: 4, name: 'תפעול, סייעות ואחזקת גנים', type: 'פר מוסד', q: `${formatNum(state.kgInst)} כיתות גן`, key: `${formatNIS(state.kgInstKey)} לגן`, total: kgInstTotal },
+        { id: 5, name: 'שכר מנהלה ואחזקת יסודי', type: 'פר מוסד', q: `${formatNum(state.elemInst)} בתי ספר`, key: `${formatNIS(state.elemInstKey)} לבי"ס`, total: elemInstTotal },
+        { id: 6, name: 'תפעול מוסדות על-יסודי', type: 'פר מוסד', q: `${formatNum(state.secInst)} מוסדות`, key: `${formatNIS(state.secInstKey)} למוסד`, total: secInstTotal },
+        { id: 7, name: 'חינוך מיוחד ושילוב', type: 'פר תלמיד חנ"מ', q: `${formatNum(state.spEdStudents)} תלמידים`, key: `${formatNIS(state.spEdKey)} לתלמיד`, total: spEdTotal },
+        { id: 8, name: 'מערך הסעות תלמידים וליווי', type: 'פר מוסע', q: `${formatNum(state.transStudents)} מוסעים`, key: `${formatNIS(state.transKey)} למוסע`, total: transTotal },
+        { id: 9, name: 'מעטפת גפ"ן רשותי', type: 'הקצאה שקלית', q: 'מעטפת מטה', key: 'סכום ישיר', total: gefenTotal },
+        { id: 10, name: 'יוזמות ופרויקטים עירוניים', type: 'הקצאה שקלית', q: 'מעטפת יוזמות', key: 'סכום ישיר', total: flexTotal },
+        { id: 11, name: 'בסיס מטה והוצאות קבועות', type: 'סכום קבוע', q: 'בסיס קבוע', key: 'סכום ישיר', total: fixedTotal }
+      ];
+
+      return {
+        kgPedTotal, elemPedTotal, secPedTotal, subtotalPed,
+        kgInstTotal, elemInstTotal, secInstTotal, subtotalInst,
+        spEdTotal, transTotal, subtotalSpecial,
+        gefenTotal, flexTotal, fixedTotal, subtotalEnvelopes,
+        totalBudget, totalStudents, totalInst, perStudent,
+        rows
+      };
+    }
+
+    // DOM Elements Mapping
+    const dom = {
+      // KPIs
+      kpiTotalBudget: document.getElementById('kpiTotalBudget'),
+      kpiPerStudent: document.getElementById('kpiPerStudent'),
+      kpiTotalStudents: document.getElementById('kpiTotalStudents'),
+      kpiTotalInst: document.getElementById('kpiTotalInst'),
+      kpiStudentsBreakdown: document.getElementById('kpiStudentsBreakdown'),
+      kpiInstBreakdown: document.getElementById('kpiInstBreakdown'),
+
+      // Sliders & Main Card Inputs
+      sliderKgStudents: document.getElementById('sliderKgStudents'),
+      numKgStudents: document.getElementById('numKgStudents'),
+      sliderKgPedKey: document.getElementById('sliderKgPedKey'),
+      numKgPedKey: document.getElementById('numKgPedKey'),
+      calcKgPed: document.getElementById('calcKgPed'),
+      badgeKgPedTotal: document.getElementById('badgeKgPedTotal'),
+
+      sliderElemStudents: document.getElementById('sliderElemStudents'),
+      numElemStudents: document.getElementById('numElemStudents'),
+      sliderElemPedKey: document.getElementById('sliderElemPedKey'),
+      numElemPedKey: document.getElementById('numElemPedKey'),
+      calcElemPed: document.getElementById('calcElemPed'),
+      badgeElemPedTotal: document.getElementById('badgeElemPedTotal'),
+
+      sliderSecStudents: document.getElementById('sliderSecStudents'),
+      numSecStudents: document.getElementById('numSecStudents'),
+      sliderSecPedKey: document.getElementById('sliderSecPedKey'),
+      numSecPedKey: document.getElementById('numSecPedKey'),
+      calcSecPed: document.getElementById('calcSecPed'),
+      badgeSecPedTotal: document.getElementById('badgeSecPedTotal'),
+
+      subtotalPed: document.getElementById('subtotalPed'),
+
+      sliderKgInst: document.getElementById('sliderKgInst'),
+      numKgInst: document.getElementById('numKgInst'),
+      sliderKgInstKey: document.getElementById('sliderKgInstKey'),
+      numKgInstKey: document.getElementById('numKgInstKey'),
+      calcKgInst: document.getElementById('calcKgInst'),
+      badgeKgInstTotal: document.getElementById('badgeKgInstTotal'),
+
+      sliderElemInst: document.getElementById('sliderElemInst'),
+      numElemInst: document.getElementById('numElemInst'),
+      sliderElemInstKey: document.getElementById('sliderElemInstKey'),
+      numElemInstKey: document.getElementById('numElemInstKey'),
+      calcElemInst: document.getElementById('calcElemInst'),
+      badgeElemInstTotal: document.getElementById('badgeElemInstTotal'),
+
+      sliderSecInst: document.getElementById('sliderSecInst'),
+      numSecInst: document.getElementById('numSecInst'),
+      sliderSecInstKey: document.getElementById('sliderSecInstKey'),
+      numSecInstKey: document.getElementById('numSecInstKey'),
+      calcSecInst: document.getElementById('calcSecInst'),
+      badgeSecInstTotal: document.getElementById('badgeSecInstTotal'),
+
+      subtotalInst: document.getElementById('subtotalInst'),
+
+      sliderSpEdStudents: document.getElementById('sliderSpEdStudents'),
+      numSpEdStudents: document.getElementById('numSpEdStudents'),
+      sliderSpEdKey: document.getElementById('sliderSpEdKey'),
+      numSpEdKey: document.getElementById('numSpEdKey'),
+      calcSpEd: document.getElementById('calcSpEd'),
+      badgeSpEdTotal: document.getElementById('badgeSpEdTotal'),
+
+      sliderTransStudents: document.getElementById('sliderTransStudents'),
+      numTransStudents: document.getElementById('numTransStudents'),
+      sliderTransKey: document.getElementById('sliderTransKey'),
+      numTransKey: document.getElementById('numTransKey'),
+      calcTrans: document.getElementById('calcTrans'),
+      badgeTransTotal: document.getElementById('badgeTransTotal'),
+
+      subtotalSpecial: document.getElementById('subtotalSpecial'),
+
+      sliderGefenBudget: document.getElementById('sliderGefenBudget'),
+      numGefenBudget: document.getElementById('numGefenBudget'),
+      calcGefen: document.getElementById('calcGefen'),
+      badgeGefenTotal: document.getElementById('badgeGefenTotal'),
+
+      sliderFlexBudget: document.getElementById('sliderFlexBudget'),
+      numFlexBudget: document.getElementById('numFlexBudget'),
+      calcFlex: document.getElementById('calcFlex'),
+      badgeFlexTotal: document.getElementById('badgeFlexTotal'),
+
+      sliderFixedBudget: document.getElementById('sliderFixedBudget'),
+      numFixedBudget: document.getElementById('numFixedBudget'),
+      calcFixed: document.getElementById('calcFixed'),
+      badgeFixedTotal: document.getElementById('badgeFixedTotal'),
+
+      subtotalEnvelopes: document.getElementById('subtotalEnvelopes'),
+
+      // Summary Table
+      tbodySummary: document.getElementById('tbodySummary'),
+
+      // 5 Top Buttons
+      btnPresetSmall: document.getElementById('btnPresetSmall'),
+      btnPresetMedium: document.getElementById('btnPresetMedium'),
+      btnPresetLarge: document.getElementById('btnPresetLarge'),
+      btnOpenDataTable: document.getElementById('btnOpenDataTable'),
+      btnResetDefaults: document.getElementById('btnResetDefaults'),
+
+      // Modal Elements
+      modalDirectInput: document.getElementById('modalDirectInput'),
+      btnCloseModalX: document.getElementById('btnCloseModalX'),
+      btnCloseModalBtn: document.getElementById('btnCloseModalBtn'),
+      btnDownloadCsv: document.getElementById('btnDownloadCsv'),
+
+      // Modal Table Inputs
+      tblNumKgStudents: document.getElementById('tblNumKgStudents'),
+      tblNumKgPedKey: document.getElementById('tblNumKgPedKey'),
+      tblKgPedTotal: document.getElementById('tblKgPedTotal'),
+
+      tblNumElemStudents: document.getElementById('tblNumElemStudents'),
+      tblNumElemPedKey: document.getElementById('tblNumElemPedKey'),
+      tblElemPedTotal: document.getElementById('tblElemPedTotal'),
+
+      tblNumSecStudents: document.getElementById('tblNumSecStudents'),
+      tblNumSecPedKey: document.getElementById('tblNumSecPedKey'),
+      tblSecPedTotal: document.getElementById('tblSecPedTotal'),
+
+      tblNumKgInst: document.getElementById('tblNumKgInst'),
+      tblNumKgInstKey: document.getElementById('tblNumKgInstKey'),
+      tblKgInstTotal: document.getElementById('tblKgInstTotal'),
+
+      tblNumElemInst: document.getElementById('tblNumElemInst'),
+      tblNumElemInstKey: document.getElementById('tblNumElemInstKey'),
+      tblElemInstTotal: document.getElementById('tblElemInstTotal'),
+
+      tblNumSecInst: document.getElementById('tblNumSecInst'),
+      tblNumSecInstKey: document.getElementById('tblNumSecInstKey'),
+      tblSecInstTotal: document.getElementById('tblSecInstTotal'),
+
+      tblNumSpEdStudents: document.getElementById('tblNumSpEdStudents'),
+      tblNumSpEdKey: document.getElementById('tblNumSpEdKey'),
+      tblSpEdTotal: document.getElementById('tblSpEdTotal'),
+
+      tblNumTransStudents: document.getElementById('tblNumTransStudents'),
+      tblNumTransKey: document.getElementById('tblNumTransKey'),
+      tblTransTotal: document.getElementById('tblTransTotal'),
+
+      tblNumGefenBudget: document.getElementById('tblNumGefenBudget'),
+      tblGefenTotal: document.getElementById('tblGefenTotal'),
+
+      tblNumFlexBudget: document.getElementById('tblNumFlexBudget'),
+      tblFlexTotal: document.getElementById('tblFlexTotal'),
+
+      tblNumFixedBudget: document.getElementById('tblNumFixedBudget'),
+      tblFixedTotal: document.getElementById('tblFixedTotal'),
+
+      tblTotalBudget: document.getElementById('tblTotalBudget')
+    };
+
+    // Update all UI inputs from State
+    function syncAllInputsFromState() {
+      // Section 1
+      dom.sliderKgStudents.value = dom.numKgStudents.value = dom.tblNumKgStudents.value = state.kgStudents;
+      dom.sliderKgPedKey.value = dom.numKgPedKey.value = dom.tblNumKgPedKey.value = state.kgPedKey;
+
+      dom.sliderElemStudents.value = dom.numElemStudents.value = dom.tblNumElemStudents.value = state.elemStudents;
+      dom.sliderElemPedKey.value = dom.numElemPedKey.value = dom.tblNumElemPedKey.value = state.elemPedKey;
+
+      dom.sliderSecStudents.value = dom.numSecStudents.value = dom.tblNumSecStudents.value = state.secStudents;
+      dom.sliderSecPedKey.value = dom.numSecPedKey.value = dom.tblNumSecPedKey.value = state.secPedKey;
+
+      // Section 2
+      dom.sliderKgInst.value = dom.numKgInst.value = dom.tblNumKgInst.value = state.kgInst;
+      dom.sliderKgInstKey.value = dom.numKgInstKey.value = dom.tblNumKgInstKey.value = state.kgInstKey;
+
+      dom.sliderElemInst.value = dom.numElemInst.value = dom.tblNumElemInst.value = state.elemInst;
+      dom.sliderElemInstKey.value = dom.numElemInstKey.value = dom.tblNumElemInstKey.value = state.elemInstKey;
+
+      dom.sliderSecInst.value = dom.numSecInst.value = dom.tblNumSecInst.value = state.secInst;
+      dom.sliderSecInstKey.value = dom.numSecInstKey.value = dom.tblNumSecInstKey.value = state.secInstKey;
+
+      // Section 3
+      dom.sliderSpEdStudents.value = dom.numSpEdStudents.value = dom.tblNumSpEdStudents.value = state.spEdStudents;
+      dom.sliderSpEdKey.value = dom.numSpEdKey.value = dom.tblNumSpEdKey.value = state.spEdKey;
+
+      dom.sliderTransStudents.value = dom.numTransStudents.value = dom.tblNumTransStudents.value = state.transStudents;
+      dom.sliderTransKey.value = dom.numTransKey.value = dom.tblNumTransKey.value = state.transKey;
+
+      // Section 4
+      dom.sliderGefenBudget.value = dom.numGefenBudget.value = dom.tblNumGefenBudget.value = state.gefenBudget;
+      dom.sliderFlexBudget.value = dom.numFlexBudget.value = dom.tblNumFlexBudget.value = state.flexBudget;
+      dom.sliderFixedBudget.value = dom.numFixedBudget.value = dom.tblNumFixedBudget.value = state.fixedBudget;
+    }
+
+    // Render Display Elements
+    function render() {
+      const res = calculate();
+
+      // Top KPIs
+      dom.kpiTotalBudget.textContent = formatNIS(res.totalBudget);
+      dom.kpiPerStudent.textContent = formatNIS(res.perStudent);
+      dom.kpiTotalStudents.textContent = formatNum(res.totalStudents);
+      dom.kpiTotalInst.textContent = formatNum(res.totalInst);
+
+      dom.kpiStudentsBreakdown.textContent = `${formatNum(state.kgStudents)} גנים | ${formatNum(state.elemStudents)} יסודי | ${formatNum(state.secStudents)} על-יסודי`;
+      dom.kpiInstBreakdown.textContent = `${formatNum(state.kgInst)} גנים | ${formatNum(state.elemInst)} יסודי | ${formatNum(state.secInst)} על-יסודי`;
+
+      // Section 1 Cards
+      dom.calcKgPed.textContent = `${formatNum(state.kgStudents)} × ${formatNIS(state.kgPedKey)} = ${formatNIS(res.kgPedTotal)}`;
+      dom.badgeKgPedTotal.textContent = formatNIS(res.kgPedTotal);
+
+      dom.calcElemPed.textContent = `${formatNum(state.elemStudents)} × ${formatNIS(state.elemPedKey)} = ${formatNIS(res.elemPedTotal)}`;
+      dom.badgeElemPedTotal.textContent = formatNIS(res.elemPedTotal);
+
+      dom.calcSecPed.textContent = `${formatNum(state.secStudents)} × ${formatNIS(state.secPedKey)} = ${formatNIS(res.secPedTotal)}`;
+      dom.badgeSecPedTotal.textContent = formatNIS(res.secPedTotal);
+
+      dom.subtotalPed.textContent = formatNIS(res.subtotalPed);
+
+      // Section 2 Cards
+      dom.calcKgInst.textContent = `${formatNum(state.kgInst)} × ${formatNIS(state.kgInstKey)} = ${formatNIS(res.kgInstTotal)}`;
+      dom.badgeKgInstTotal.textContent = formatNIS(res.kgInstTotal);
+
+      dom.calcElemInst.textContent = `${formatNum(state.elemInst)} × ${formatNIS(state.elemInstKey)} = ${formatNIS(res.elemInstTotal)}`;
+      dom.badgeElemInstTotal.textContent = formatNIS(res.elemInstTotal);
+
+      dom.calcSecInst.textContent = `${formatNum(state.secInst)} × ${formatNIS(state.secInstKey)} = ${formatNIS(res.secInstTotal)}`;
+      dom.badgeSecInstTotal.textContent = formatNIS(res.secInstTotal);
+
+      dom.subtotalInst.textContent = formatNIS(res.subtotalInst);
+
+      // Section 3 Cards
+      dom.calcSpEd.textContent = `${formatNum(state.spEdStudents)} × ${formatNIS(state.spEdKey)} = ${formatNIS(res.spEdTotal)}`;
+      dom.badgeSpEdTotal.textContent = formatNIS(res.spEdTotal);
+
+      dom.calcTrans.textContent = `${formatNum(state.transStudents)} × ${formatNIS(state.transKey)} = ${formatNIS(res.transTotal)}`;
+      dom.badgeTransTotal.textContent = formatNIS(res.transTotal);
+
+      dom.subtotalSpecial.textContent = formatNIS(res.subtotalSpecial);
+
+      // Section 4 Cards
+      dom.calcGefen.textContent = `מעטפת ישירה: ${formatNIS(state.gefenBudget)}`;
+      dom.badgeGefenTotal.textContent = formatNIS(res.gefenTotal);
+
+      dom.calcFlex.textContent = `מעטפת ישירה: ${formatNIS(state.flexBudget)}`;
+      dom.badgeFlexTotal.textContent = formatNIS(res.flexTotal);
+
+      dom.calcFixed.textContent = `בסיס קבוע: ${formatNIS(state.fixedBudget)}`;
+      dom.badgeFixedTotal.textContent = formatNIS(res.fixedTotal);
+
+      dom.subtotalEnvelopes.textContent = formatNIS(res.subtotalEnvelopes);
+
+      // Summary Table
+      dom.tbodySummary.innerHTML = '';
+      res.rows.forEach(r => {
+        const pct = res.totalBudget > 0 ? ((r.total / res.totalBudget) * 100).toFixed(1) + '%' : '0.0%';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${r.id}</strong></td>
+          <td><strong>${r.name}</strong></td>
+          <td>${r.type}</td>
+          <td>${r.q}</td>
+          <td><strong>${r.key}</strong></td>
+          <td><strong>${formatNIS(r.total)}</strong></td>
+          <td>${pct}</td>
+        `;
+        dom.tbodySummary.appendChild(tr);
+      });
+
+      const trTotal = document.createElement('tr');
+      trTotal.className = 'total-row';
+      trTotal.innerHTML = `
+        <td colspan="3"><strong>סה"כ כלל תקציב החינוך</strong></td>
+        <td><strong>${formatNum(res.totalStudents)} תלמידים</strong></td>
+        <td><strong>${formatNum(res.totalInst)} מוסדות</strong></td>
+        <td><strong style="color:var(--brand-blue); font-size:1.1rem;">${formatNIS(res.totalBudget)}</strong></td>
+        <td><strong>100.0%</strong></td>
+      `;
+      dom.tbodySummary.appendChild(trTotal);
+
+      // Modal Table Live Calculated Outputs
+      dom.tblKgPedTotal.textContent = formatNIS(res.kgPedTotal);
+      dom.tblElemPedTotal.textContent = formatNIS(res.elemPedTotal);
+      dom.tblSecPedTotal.textContent = formatNIS(res.secPedTotal);
+      dom.tblKgInstTotal.textContent = formatNIS(res.kgInstTotal);
+      dom.tblElemInstTotal.textContent = formatNIS(res.elemInstTotal);
+      dom.tblSecInstTotal.textContent = formatNIS(res.secInstTotal);
+      dom.tblSpEdTotal.textContent = formatNIS(res.spEdTotal);
+      dom.tblTransTotal.textContent = formatNIS(res.transTotal);
+      dom.tblGefenTotal.textContent = formatNIS(res.gefenTotal);
+      dom.tblFlexTotal.textContent = formatNIS(res.flexTotal);
+      dom.tblFixedTotal.textContent = formatNIS(res.fixedTotal);
+      dom.tblTotalBudget.textContent = formatNIS(res.totalBudget);
+    }
+
+    // Three-way binding (slider, card numInput, modal table input)
+    function bindTriple(slider, cardInput, tblInput, stateKey) {
+      function updateVal(val) {
+        if (isNaN(val) || val < 0) val = 0;
+        state[stateKey] = val;
+        slider.value = val;
+        cardInput.value = val;
+        tblInput.value = val;
+        render();
+      }
+
+      slider.addEventListener('input', (e) => updateVal(parseFloat(e.target.value)));
+      cardInput.addEventListener('input', (e) => updateVal(parseFloat(e.target.value)));
+      tblInput.addEventListener('input', (e) => updateVal(parseFloat(e.target.value)));
+    }
+
+    // Apply Preset
+    function setPreset(presetKey) {
+      if (!PRESETS[presetKey]) return;
+      state = Object.assign({}, PRESETS[presetKey]);
+      syncAllInputsFromState();
+      render();
+
+      [dom.btnPresetSmall, dom.btnPresetMedium, dom.btnPresetLarge].forEach(btn => btn.classList.remove('active'));
+      if (presetKey === 'small') dom.btnPresetSmall.classList.add('active');
+      if (presetKey === 'medium') dom.btnPresetMedium.classList.add('active');
+      if (presetKey === 'large') dom.btnPresetLarge.classList.add('active');
+    }
+
+    // Modal Controls
+    function openModal() {
+      syncAllInputsFromState();
+      dom.modalDirectInput.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      dom.modalDirectInput.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Export CSV with UTF-8 BOM
+    function downloadCSV() {
+      const res = calculate();
+      let csv = '\uFEFF'; // Excel UTF-8 BOM
+      csv += 'מספר,תחום תקציבי,סוג מנוע,כמות,מפתח עלות (₪),סך עלות מחושבת (₪),אחוז מסך התקציב\r\n';
+
+      res.rows.forEach(r => {
+        const pct = res.totalBudget > 0 ? ((r.total / res.totalBudget) * 100).toFixed(1) + '%' : '0.0%';
+        const cleanName = `"${r.name.replace(/"/g, '""')}"`;
+        const cleanQ = `"${r.q.replace(/"/g, '""')}"`;
+        const cleanKey = `"${r.key.replace(/"/g, '""')}"`;
+        const cleanTotal = Math.round(r.total);
+        csv += `${r.id},${cleanName},${r.type},${cleanQ},${cleanKey},${cleanTotal},${pct}\r\n`;
+      });
+
+      csv += `,"סה""כ כלל תקציב החינוך",,"${res.totalStudents} תלמידים | ${res.totalInst} מוסדות",,${Math.round(res.totalBudget)},100.0%\r\n`;
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'נתוני_סימולטור_תקציב_חינוך.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Export Summary Table for Excel
+    function downloadSummaryTable() {
+      const res = calculate();
+      let csv = '\uFEFF'; // Excel UTF-8 BOM
+      csv += 'מספר,תחום תקציבי,סוג מנוע,כמות פעילה,מפתח עלות שנקבע,סך עלות התחום (₪),אחוז מסך התקציב\r\n';
+
+      res.rows.forEach(r => {
+        const pct = res.totalBudget > 0 ? ((r.total / res.totalBudget) * 100).toFixed(1) + '%' : '0.0%';
+        const cleanName = `"${r.name.replace(/"/g, '""')}"`;
+        const cleanType = `"${r.type.replace(/"/g, '""')}"`;
+        const cleanQ = `"${r.q.replace(/"/g, '""')}"`;
+        const cleanKey = `"${r.key.replace(/"/g, '""')}"`;
+        const cleanTotal = `"${formatNIS(r.total)}"`;
+        csv += `${r.id},${cleanName},${cleanType},${cleanQ},${cleanKey},${cleanTotal},${pct}\r\n`;
+      });
+
+      const totalStudentsStr = `"${formatNum(res.totalStudents)} תלמידים"`;
+      const totalInstStr = `"${formatNum(res.totalInst)} מוסדות"`;
+      const totalBudgetStr = `"${formatNIS(res.totalBudget)}"`;
+      csv += `,"סה""כ כלל תקציב החינוך",,${totalStudentsStr},${totalInstStr},${totalBudgetStr},100.0%\r\n`;
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'טבלת_ריכוז_תקציב_חינוך.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Initialize Everything
+    function init() {
+      // 1. Pedagogical
+      bindTriple(dom.sliderKgStudents, dom.numKgStudents, dom.tblNumKgStudents, 'kgStudents');
+      bindTriple(dom.sliderKgPedKey, dom.numKgPedKey, dom.tblNumKgPedKey, 'kgPedKey');
+
+      bindTriple(dom.sliderElemStudents, dom.numElemStudents, dom.tblNumElemStudents, 'elemStudents');
+      bindTriple(dom.sliderElemPedKey, dom.numElemPedKey, dom.tblNumElemPedKey, 'elemPedKey');
+
+      bindTriple(dom.sliderSecStudents, dom.numSecStudents, dom.tblNumSecStudents, 'secStudents');
+      bindTriple(dom.sliderSecPedKey, dom.numSecPedKey, dom.tblNumSecPedKey, 'secPedKey');
+
+      // 2. Institutions
+      bindTriple(dom.sliderKgInst, dom.numKgInst, dom.tblNumKgInst, 'kgInst');
+      bindTriple(dom.sliderKgInstKey, dom.numKgInstKey, dom.tblNumKgInstKey, 'kgInstKey');
+
+      bindTriple(dom.sliderElemInst, dom.numElemInst, dom.tblNumElemInst, 'elemInst');
+      bindTriple(dom.sliderElemInstKey, dom.numElemInstKey, dom.tblNumElemInstKey, 'elemInstKey');
+
+      bindTriple(dom.sliderSecInst, dom.numSecInst, dom.tblNumSecInst, 'secInst');
+      bindTriple(dom.sliderSecInstKey, dom.numSecInstKey, dom.tblNumSecInstKey, 'secInstKey');
+
+      // 3. Special Populations
+      bindTriple(dom.sliderSpEdStudents, dom.numSpEdStudents, dom.tblNumSpEdStudents, 'spEdStudents');
+      bindTriple(dom.sliderSpEdKey, dom.numSpEdKey, dom.tblNumSpEdKey, 'spEdKey');
+
+      bindTriple(dom.sliderTransStudents, dom.numTransStudents, dom.tblNumTransStudents, 'transStudents');
+      bindTriple(dom.sliderTransKey, dom.numTransKey, dom.tblNumTransKey, 'transKey');
+
+      // 4. Envelopes & Fixed
+      bindTriple(dom.sliderGefenBudget, dom.numGefenBudget, dom.tblNumGefenBudget, 'gefenBudget');
+      bindTriple(dom.sliderFlexBudget, dom.numFlexBudget, dom.tblNumFlexBudget, 'flexBudget');
+      bindTriple(dom.sliderFixedBudget, dom.numFixedBudget, dom.tblNumFixedBudget, 'fixedBudget');
+
+      // 5 Top Buttons Listeners
+      dom.btnPresetSmall.addEventListener('click', () => setPreset('small'));
+      dom.btnPresetMedium.addEventListener('click', () => setPreset('medium'));
+      dom.btnPresetLarge.addEventListener('click', () => setPreset('large'));
+      dom.btnResetDefaults.addEventListener('click', () => setPreset('medium'));
+      dom.btnOpenDataTable.addEventListener('click', openModal);
+
+      // Modal triggers
+      dom.btnCloseModalX.addEventListener('click', closeModal);
+      dom.btnCloseModalBtn.addEventListener('click', closeModal);
+      dom.modalDirectInput.addEventListener('click', (e) => {
+        if (e.target === dom.modalDirectInput) closeModal();
+      });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && dom.modalDirectInput.classList.contains('open')) {
+          closeModal();
+        }
+      });
+
+      // CSV Export
+      dom.btnDownloadCsv.addEventListener('click', downloadCSV);
+
+      const btnDownloadSummaryTable = document.getElementById('btnDownloadSummaryTable');
+      if (btnDownloadSummaryTable) {
+        btnDownloadSummaryTable.addEventListener('click', downloadSummaryTable);
+      }
+
+      // Initial Sync & Render
+      syncAllInputsFromState();
+      render();
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
