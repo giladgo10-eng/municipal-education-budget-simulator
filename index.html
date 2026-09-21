@@ -632,6 +632,48 @@
       background: var(--bg-subtle);
       color: var(--primary-900);
     }
+
+    /* App Footer */
+    .app-footer {
+      margin-top: 2rem;
+      padding: 1.25rem 1rem;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      color: var(--primary-700);
+      font-size: 0.9rem;
+      direction: rtl;
+    }
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+    .footer-divider {
+      color: #94a3b8;
+      user-select: none;
+    }
+    .footer-link {
+      color: var(--brand-blue);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.15s ease, text-decoration 0.15s ease;
+    }
+    .footer-link:hover {
+      color: var(--brand-blue-hover);
+      text-decoration: underline;
+    }
+    @media (max-width: 640px) {
+      .app-footer {
+        margin-top: 1.5rem;
+        padding: 1rem 0.5rem;
+        font-size: 0.85rem;
+      }
+      .footer-content {
+        gap: 0.4rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1168,6 +1210,17 @@
         </tbody>
       </table>
     </section>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <span>כל הזכויות שמורות © גלעד גולדמן</span>
+        <span class="footer-divider">|</span>
+        <a href="mailto:giladgo10@gmail.com" class="footer-link">giladgo10@gmail.com</a>
+        <span class="footer-divider">|</span>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScoYrhhbX1VwVyA60IjQxB91Fa7iDy27DnAghc5bEWJU5UXuQ/viewform?usp=dialog" target="_blank" rel="noopener noreferrer" class="footer-link feedback-link">משוב</a>
+      </div>
+    </footer>
 
   </div>
 
