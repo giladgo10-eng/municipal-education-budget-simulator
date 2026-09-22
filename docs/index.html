@@ -439,6 +439,104 @@
       color: var(--primary-900);
     }
 
+    /* Table Info Tooltips */
+    .table-name-wrapper {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      position: relative;
+    }
+    .info-tooltip-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .info-btn {
+      background: #eff6ff;
+      color: var(--brand-blue);
+      border: 1px solid #bfdbfe;
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 800;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: all 0.15s ease;
+      user-select: none;
+      vertical-align: middle;
+    }
+    .info-btn:hover,
+    .info-btn:focus,
+    .info-tooltip-wrap.active .info-btn {
+      background: var(--brand-blue);
+      color: #ffffff;
+      border-color: var(--brand-blue);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+    .tooltip-box {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: -10px;
+      width: 290px;
+      max-width: 85vw;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: var(--radius-md);
+      padding: 0.75rem 0.9rem;
+      font-size: 0.82rem;
+      line-height: 1.45;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+      direction: rtl;
+      text-align: right;
+      font-weight: normal;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .tooltip-box::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      right: 14px;
+      border-width: 6px;
+      border-style: solid;
+      border-color: #0f172a transparent transparent transparent;
+    }
+    .tooltip-row {
+      display: block;
+      color: #e2e8f0;
+    }
+    .tooltip-label {
+      color: #93c5fd;
+      font-weight: 800;
+      margin-left: 0.3rem;
+    }
+    @media (hover: hover) {
+      .info-tooltip-wrap:hover .tooltip-box,
+      .info-btn:focus + .tooltip-box {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+    .info-tooltip-wrap.active .tooltip-box {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     /* Modal / Drawer Overlay for Direct Data Input */
     .modal-overlay {
       display: none;
@@ -1925,17 +2023,116 @@
       const perStudent = totalStudents > 0 ? Math.round(totalBudget / totalStudents) : 0;
 
       const rows = [
-        { id: 1, name: 'סל פדגוגי גני ילדים', type: 'פר תלמיד', q: `${formatNum(state.kgStudents)} ילדים`, key: `${formatNIS(state.kgPedKey)} לילד`, total: kgPedTotal },
-        { id: 2, name: 'סל פדגוגי בתי ספר יסודיים', type: 'פר תלמיד', q: `${formatNum(state.elemStudents)} תלמידים`, key: `${formatNIS(state.elemPedKey)} לתלמיד`, total: elemPedTotal },
-        { id: 3, name: 'סל פדגוגי על-יסודי וחט"ב', type: 'פר תלמיד', q: `${formatNum(state.secStudents)} תלמידים`, key: `${formatNIS(state.secPedKey)} לתלמיד`, total: secPedTotal },
-        { id: 4, name: 'תפעול, סייעות ואחזקת גנים', type: 'פר מוסד', q: `${formatNum(state.kgInst)} כיתות גן`, key: `${formatNIS(state.kgInstKey)} לגן`, total: kgInstTotal },
-        { id: 5, name: 'שכר מנהלה ואחזקת יסודי', type: 'פר מוסד', q: `${formatNum(state.elemInst)} בתי ספר`, key: `${formatNIS(state.elemInstKey)} לבי"ס`, total: elemInstTotal },
-        { id: 6, name: 'תפעול מוסדות על-יסודי', type: 'פר מוסד', q: `${formatNum(state.secInst)} מוסדות`, key: `${formatNIS(state.secInstKey)} למוסד`, total: secInstTotal },
-        { id: 7, name: 'חינוך מיוחד ושילוב', type: 'פר תלמיד חנ"מ', q: `${formatNum(state.spEdStudents)} תלמידים`, key: `${formatNIS(state.spEdKey)} לתלמיד`, total: spEdTotal },
-        { id: 8, name: 'מערך הסעות תלמידים וליווי', type: 'פר מוסע', q: `${formatNum(state.transStudents)} מוסעים`, key: `${formatNIS(state.transKey)} למוסע`, total: transTotal },
-        { id: 9, name: 'מעטפת גפ"ן רשותי', type: 'הקצאה שקלית', q: 'מעטפת מטה', key: 'סכום ישיר', total: gefenTotal },
-        { id: 10, name: 'יוזמות ופרויקטים עירוניים', type: 'הקצאה שקלית', q: 'מעטפת יוזמות', key: 'סכום ישיר', total: flexTotal },
-        { id: 11, name: 'בסיס מטה והוצאות קבועות', type: 'סכום קבוע', q: 'בסיס קבוע', key: 'סכום ישיר', total: fixedTotal }
+        {
+          id: 1,
+          name: 'סל פדגוגי גני ילדים',
+          type: 'פר תלמיד',
+          q: `${formatNum(state.kgStudents)} ילדים`,
+          key: `${formatNIS(state.kgPedKey)} לילד`,
+          total: kgPedTotal,
+          descWhat: 'תקציב פדגוגי המיועד לפעילות והעשרה בגני הילדים.',
+          descHow: 'מספר ילדי הגנים × העלות שנקבעה לילד.'
+        },
+        {
+          id: 2,
+          name: 'סל פדגוגי בתי ספר יסודיים',
+          type: 'פר תלמיד',
+          q: `${formatNum(state.elemStudents)} תלמידים`,
+          key: `${formatNIS(state.elemPedKey)} לתלמיד`,
+          total: elemPedTotal,
+          descWhat: 'תקציב פדגוגי לפעילות בבתי הספר היסודיים.',
+          descHow: 'מספר תלמידי היסודי × העלות שנקבעה לתלמיד.'
+        },
+        {
+          id: 3,
+          name: 'סל פדגוגי על-יסודי וחט"ב',
+          type: 'פר תלמיד',
+          q: `${formatNum(state.secStudents)} תלמידים`,
+          key: `${formatNIS(state.secPedKey)} לתלמיד`,
+          total: secPedTotal,
+          descWhat: 'תקציב פדגוגי לתלמידי החטיבות והחינוך העל-יסודי.',
+          descHow: 'מספר תלמידי העל-יסודי × העלות שנקבעה לתלמיד.'
+        },
+        {
+          id: 4,
+          name: 'תפעול, סייעות ואחזקת גנים',
+          type: 'פר מוסד',
+          q: `${formatNum(state.kgInst)} כיתות גן`,
+          key: `${formatNIS(state.kgInstKey)} לגן`,
+          total: kgInstTotal,
+          descWhat: 'עלויות תפעול, סייעות, ציוד ואחזקת כיתות גני הילדים.',
+          descHow: 'מספר כיתות הגן × העלות שנקבעה לכיתת גן.'
+        },
+        {
+          id: 5,
+          name: 'שכר מנהלה ואחזקת יסודי',
+          type: 'פר מוסד',
+          q: `${formatNum(state.elemInst)} בתי ספר`,
+          key: `${formatNIS(state.elemInstKey)} לבי"ס`,
+          total: elemInstTotal,
+          descWhat: 'עלויות מנהלה, מזכירות, אב-בית ואחזקת בתי הספר היסודיים.',
+          descHow: 'מספר בתי הספר היסודיים × העלות שנקבעה לבית ספר.'
+        },
+        {
+          id: 6,
+          name: 'תפעול מוסדות על-יסודי',
+          type: 'פר מוסד',
+          q: `${formatNum(state.secInst)} מוסדות`,
+          key: `${formatNIS(state.secInstKey)} למוסד`,
+          total: secInstTotal,
+          descWhat: 'עלויות תפעול, ניהול ואחזקה של מוסדות החינוך העל-יסודיים.',
+          descHow: 'מספר מוסדות העל-יסודי × העלות שנקבעה למוסד.'
+        },
+        {
+          id: 7,
+          name: 'חינוך מיוחד ושילוב',
+          type: 'פר תלמיד חנ"מ',
+          q: `${formatNum(state.spEdStudents)} תלמידים`,
+          key: `${formatNIS(state.spEdKey)} לתלמיד`,
+          total: spEdTotal,
+          descWhat: 'תקציב לשירותים, סייעות שילוב ומענים בתחום החינוך המיוחד.',
+          descHow: 'מספר תלמידי החינוך המיוחד והשילוב × העלות שנקבעה לתלמיד.'
+        },
+        {
+          id: 8,
+          name: 'מערך הסעות תלמידים וליווי',
+          type: 'פר מוסע',
+          q: `${formatNum(state.transStudents)} מוסעים`,
+          key: `${formatNIS(state.transKey)} למוסע`,
+          total: transTotal,
+          descWhat: 'עלויות מערך הסעות התלמידים, קווי חינוך מיוחד וליווי.',
+          descHow: 'מספר התלמידים המוסעים × העלות השנתית שנקבעה למוסע.'
+        },
+        {
+          id: 9,
+          name: 'מעטפת גפ"ן רשותי',
+          type: 'הקצאה שקלית',
+          q: 'מעטפת מטה',
+          key: 'סכום ישיר',
+          total: gefenTotal,
+          descWhat: 'הקצאה רשותית משלימה לפעילות ותוכניות במסגרת מעטפת גפ"ן.',
+          descHow: 'סכום הקצאה ישיר שנקבע במערכת.'
+        },
+        {
+          id: 10,
+          name: 'יוזמות ופרויקטים עירוניים',
+          type: 'הקצאה שקלית',
+          q: 'מעטפת יוזמות',
+          key: 'סכום ישיר',
+          total: flexTotal,
+          descWhat: 'תקציב ליוזמות, תוכניות ופרויקטים חינוכיים עירוניים מעבר לליבה.',
+          descHow: 'סכום הקצאה ישיר שנקבע במערכת.'
+        },
+        {
+          id: 11,
+          name: 'בסיס מטה והוצאות קבועות',
+          type: 'סכום קבוע',
+          q: 'בסיס קבוע',
+          key: 'סכום ישיר',
+          total: fixedTotal,
+          descWhat: 'הוצאות בסיס ומטה שאינן משתנות ישירות לפי מספר תלמידים או מוסדות.',
+          descHow: 'סכום בסיס קבוע שנקבע במערכת.'
+        }
       ];
 
       return {
@@ -2199,7 +2396,18 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><strong>${r.id}</strong></td>
-          <td><strong>${r.name}</strong></td>
+          <td>
+            <div class="table-name-wrapper">
+              <span><strong>${r.name}</strong></span>
+              <span class="info-tooltip-wrap">
+                <button type="button" class="info-btn" aria-label="הסבר על ${r.name}" title="מידע על הסעיף">ⓘ</button>
+                <span class="tooltip-box" role="tooltip">
+                  <span class="tooltip-row"><strong class="tooltip-label">מה כולל?</strong> ${r.descWhat}</span>
+                  <span class="tooltip-row"><strong class="tooltip-label">איך מחושב?</strong> ${r.descHow}</span>
+                </span>
+              </span>
+            </div>
+          </td>
           <td>${r.type}</td>
           <td>${r.q}</td>
           <td><strong>${r.key}</strong></td>
@@ -2445,6 +2653,22 @@
         }
         document.body.removeChild(ta);
       }
+
+      // Info Tooltip Click & Outside Click Handler (Mobile/Tablet & Accessibility)
+      document.addEventListener('click', (e) => {
+        const infoBtn = e.target.closest('.info-btn');
+        if (infoBtn) {
+          e.stopPropagation();
+          const currentWrap = infoBtn.closest('.info-tooltip-wrap');
+          const isAlreadyActive = currentWrap && currentWrap.classList.contains('active');
+          document.querySelectorAll('.info-tooltip-wrap.active').forEach(w => w.classList.remove('active'));
+          if (!isAlreadyActive && currentWrap) {
+            currentWrap.classList.add('active');
+          }
+          return;
+        }
+        document.querySelectorAll('.info-tooltip-wrap.active').forEach(w => w.classList.remove('active'));
+      });
 
       // Initial Sync & Render
       syncAllInputsFromState();
