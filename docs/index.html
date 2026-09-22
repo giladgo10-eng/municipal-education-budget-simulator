@@ -633,6 +633,252 @@
       color: var(--primary-900);
     }
 
+    /* AI Advisor Section */
+    .ai-advisor-section {
+      background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+      border: 2px solid #bfdbfe;
+      border-radius: var(--radius-xl);
+      padding: 2rem 2.25rem;
+      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.08), 0 8px 10px -6px rgba(37, 99, 235, 0.04);
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-advisor-section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--brand-blue) 0%, var(--accent-purple) 50%, var(--accent-emerald) 100%);
+    }
+    .ai-advisor-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .ai-advisor-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      align-self: flex-start;
+      background: #eff6ff;
+      color: var(--brand-blue);
+      border: 1px solid #bfdbfe;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+    .ai-advisor-title {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--primary-900);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .ai-advisor-lead {
+      color: var(--primary-700);
+      font-size: 1rem;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+    /* Steps Grid */
+    .ai-steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .ai-step-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.15rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ai-step-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.06);
+    }
+    .ai-step-number {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--brand-blue), #1d4ed8);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+    .ai-step-content {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .ai-step-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary-900);
+    }
+    .ai-step-text {
+      font-size: 0.9rem;
+      color: var(--primary-700);
+      line-height: 1.45;
+    }
+    /* Action Area */
+    .ai-action-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0;
+    }
+    .btn-open-advisor {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #3b82f6 100%);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 0.9rem 2.25rem;
+      border-radius: 999px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-open-advisor:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.45);
+      color: #ffffff;
+    }
+    .btn-open-advisor .external-icon {
+      font-size: 1.1rem;
+      transition: transform 0.2s ease;
+    }
+    .btn-open-advisor:hover .external-icon {
+      transform: translate(-3px, -3px);
+    }
+    .ai-account-note {
+      font-size: 0.85rem;
+      color: var(--primary-700);
+      font-weight: 600;
+    }
+    /* Prompt Suggestion Box */
+    .ai-prompt-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.35rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .ai-prompt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .ai-prompt-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--primary-900);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    .btn-copy-prompt {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--bg-subtle);
+      border: 1px solid #cbd5e1;
+      color: var(--primary-800);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .btn-copy-prompt:hover {
+      background: var(--brand-blue-light);
+      border-color: #bfdbfe;
+      color: var(--brand-blue);
+    }
+    .btn-copy-prompt.copied {
+      background: var(--accent-emerald-light);
+      border-color: #a7f3d0;
+      color: var(--accent-emerald);
+    }
+    .ai-prompt-content {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 1rem 1.15rem;
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: var(--primary-800);
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-weight: 500;
+      direction: rtl;
+      user-select: all;
+    }
+    /* Disclaimer */
+    .ai-disclaimer {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.84rem;
+      color: #64748b;
+      line-height: 1.5;
+      background: rgba(241, 245, 249, 0.7);
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+    }
+    .ai-disclaimer .disclaimer-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    @media (max-width: 768px) {
+      .ai-advisor-section {
+        padding: 1.5rem 1.25rem;
+      }
+      .ai-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+      }
+      .btn-open-advisor {
+        width: 100%;
+        font-size: 1.05rem;
+        padding: 0.85rem 1.5rem;
+      }
+    }
+
     /* App Footer */
     .app-footer {
       margin-top: 2rem;
@@ -1209,6 +1455,78 @@
           <!-- Populated by JavaScript -->
         </tbody>
       </table>
+    </section>
+
+    <!-- AI Advisor Section -->
+    <section class="ai-advisor-section">
+      <div class="ai-advisor-header">
+        <div class="ai-advisor-badge">
+          <span>✨</span>
+          <span>יועץ חכם</span>
+        </div>
+        <h2 class="ai-advisor-title">
+          <span>🤖</span>
+          <span>יועץ AI לשיפור התקציב</span>
+        </h2>
+        <p class="ai-advisor-lead">
+          סיימתם לבנות את תקציב החינוך?<br>
+          הורידו את התקציב שיצרתם והעבירו אותו ליועץ התקציבי החכם.<br>
+          היועץ יסייע לזהות נקודות חוזק, סיכונים, פערים והזדמנויות לשיפור התקציב.
+        </p>
+      </div>
+
+      <!-- 2-Step Process Flow -->
+      <div class="ai-steps-grid">
+        <div class="ai-step-card">
+          <div class="ai-step-number">1</div>
+          <div class="ai-step-content">
+            <div class="ai-step-title">שלב ראשון</div>
+            <div class="ai-step-text">הורידו את התקציב שיצרתם בסימולטור.</div>
+          </div>
+        </div>
+
+        <div class="ai-step-card">
+          <div class="ai-step-number">2</div>
+          <div class="ai-step-content">
+            <div class="ai-step-title">שלב שני</div>
+            <div class="ai-step-text">פתחו את יועץ התקציב והעלו אליו את הקובץ.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Action Callout -->
+      <div class="ai-action-area">
+        <a href="https://notebook.google.com/notebook/776fa02d-762c-4af7-a49f-9abe3d0c41e0/preview" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           class="btn-open-advisor">
+          <span>🚀</span>
+          <span>פתחו את יועץ התקציב</span>
+          <span class="external-icon">↗</span>
+        </a>
+        <div class="ai-account-note">נדרש חשבון Google לצורך השימוש ביועץ.</div>
+      </div>
+
+      <!-- Prompt Suggestion Box -->
+      <div class="ai-prompt-box">
+        <div class="ai-prompt-header">
+          <div class="ai-prompt-title">
+            <span>💡</span>
+            <span>הצעה לשאלה ליועץ</span>
+          </div>
+          <button type="button" class="btn-copy-prompt" id="btnCopyPrompt" title="העתק שאלה ללוח">
+            <span id="copyIcon">📋</span>
+            <span id="copyText">העתקה</span>
+          </button>
+        </div>
+        <div class="ai-prompt-content" id="aiPromptText">נתח את תקציב החינוך הרשותי המצורף. בחן את מבנה ההכנסות וההוצאות, האיזון התקציבי, מוקדי ההוצאה המרכזיים, סעיפים חריגים, סיכונים, הזדמנויות להתייעלות ותחומים שבהם ייתכן שנדרש חיזוק תקציבי. התייחס גם לקשר בין התקציב לבין סדרי העדיפויות החינוכיים. הצג תחילה 5 תובנות מרכזיות, לאחר מכן 5 הצעות מעשיות לשיפור, ולבסוף שאלות שכדאי למנהל החינוך ולגזבר לברר לפני אישור התקציב. אל תניח נתונים שאינם מופיעים בקובץ; כאשר חסר מידע, ציין זאת במפורש.</div>
+      </div>
+
+      <!-- Disclaimer Note -->
+      <div class="ai-disclaimer">
+        <span class="disclaimer-icon">ℹ️</span>
+        <span>יועץ ה-AI הוא כלי עזר לחשיבה ולבחינת חלופות. המלצותיו אינן מחליפות בדיקה מקצועית, חשבונאית או החלטה של הגורמים המוסמכים ברשות.</span>
+      </div>
     </section>
 
     <!-- App Footer -->
@@ -2030,6 +2348,55 @@
       const btnDownloadSummaryTable = document.getElementById('btnDownloadSummaryTable');
       if (btnDownloadSummaryTable) {
         btnDownloadSummaryTable.addEventListener('click', downloadSummaryTable);
+      }
+
+      // Copy AI Prompt
+      const btnCopyPrompt = document.getElementById('btnCopyPrompt');
+      const aiPromptText = document.getElementById('aiPromptText');
+      const copyIcon = document.getElementById('copyIcon');
+      const copyText = document.getElementById('copyText');
+
+      if (btnCopyPrompt && aiPromptText) {
+        btnCopyPrompt.addEventListener('click', () => {
+          const textToCopy = (aiPromptText.innerText || aiPromptText.textContent).trim();
+          const onSuccess = () => {
+            btnCopyPrompt.classList.add('copied');
+            if (copyIcon) copyIcon.textContent = '✓';
+            if (copyText) copyText.textContent = 'הועתק ללוח!';
+            setTimeout(() => {
+              btnCopyPrompt.classList.remove('copied');
+              if (copyIcon) copyIcon.textContent = '📋';
+              if (copyText) copyText.textContent = 'העתקה';
+            }, 2500);
+          };
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(textToCopy).then(onSuccess).catch(() => {
+              fallbackCopy(textToCopy, onSuccess);
+            });
+          } else {
+            fallbackCopy(textToCopy, onSuccess);
+          }
+        });
+      }
+
+      function fallbackCopy(text, cb) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.left = '0';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+          document.execCommand('copy');
+          if (cb) cb();
+        } catch (e) {
+          console.error('Copy failed', e);
+        }
+        document.body.removeChild(ta);
       }
 
       // Initial Sync & Render
